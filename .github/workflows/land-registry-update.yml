@@ -1,0 +1,54 @@
+name: Isle of Wight Land Registry Data Monthly Update
+
+on:
+  schedule:
+    # Run on the 21st of each month at 02:00 UTC
+    - cron: '0 2 21 * *'
+  workflow_dispatch:  # Allow manual triggering
+
+jobs:
+  update-land-registry-data:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up environment variables
+        run: |
+          echo "MONTH_NAME=$(date +%B)" >> $GITHUB_ENV
+          echo "YEAR=$(date +%Y)" >> $GITHUB_ENV
+      
+      - name: Create directory if it doesn't exist
+        run: mkdir -p rawMonthlyData
+      
+      - name: Download Land Registry data
+        run: |
+          wget http://prod.publicdata.landregistry.gov.uk.s3-website-eu-west-1.amazonaws.com/pp-monthly-update-new-version.csv -O downloaded_data.csv
+      
+      - name: Filter for Isle of Wight data
+        run: |
+          grep "ISLE OF WIGHT" downloaded_data.csv > "rawMonthlyData/${MONTH_NAME}_${YEAR}.csv"
+          rm downloaded_data.csv
+      
+      - name: Check if there are changes
+        id: check_changes
+        run: |
+          if [[ -s "rawMonthlyData/${MONTH_NAME}_${YEAR}.csv" ]]; then
+            echo "changes=true" >> $GITHUB_OUTPUT
+          else
+            echo "changes=false" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Configure Git
+        if: steps.check_changes.outputs.changes == 'true'
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+      
+      - name: Commit and push changes
+        if: steps.check_changes.outputs.changes == 'true'
+        run: |
+          git add "rawMonthlyData/${MONTH_NAME}_${YEAR}.csv"
+          git commit -m "Add Isle of Wight Land Registry data for ${MONTH_NAME} ${YEAR}"
+          git push
