@@ -4,7 +4,7 @@ UK House prices paid data
 
 Column explanations: https://www.gov.uk/guidance/about-the-price-paid-data#explanations-of-column-headers-in-the-ppd
 
-= __Transaction unique identifier__:	A reference number which is generated automatically recording each published sale. The number is unique and will change each time a sale is recorded.
+- __Transaction unique identifier__:	A reference number which is generated automatically recording each published sale. The number is unique and will change each time a sale is recorded.
 - __Price__:	Sale price stated on the transfer deed.
 - __Date of Transfer__:	Date when the sale was completed, as stated on the transfer deed.
 - __Postcode__:	This is the postcode used at the time of the original transaction. Note that postcodes can be reallocated and these changes are not reflected in the Price Paid Dataset.
