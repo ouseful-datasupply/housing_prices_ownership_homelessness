@@ -2,8 +2,8 @@ name: Isle of Wight Land Registry Data Monthly Update
 
 on:
   schedule:
-    # Run on the 21st of each month at 02:00 UTC
-    - cron: '0 2 21 * *'
+    # Run on the 1st of each month at 02:00 UTC
+    - cron: '0 2 1 * *'
   workflow_dispatch:  # Allow manual triggering
 
 jobs:
